@@ -12,6 +12,7 @@ const demoButton = document.querySelector('#demo-btn');
 const roundLabel = document.querySelector('#round-label');
 const scoreLabel = document.querySelector('#score-label');
 const speedLabel = document.querySelector('#speed-label');
+const phaseLabel = document.querySelector('#phase-label');
 
 const params = new URLSearchParams(window.location.search);
 const seedParam = Number(params.get('seed')) || 20260224;
@@ -27,6 +28,7 @@ const padColors = [
 
 const padLabels = ['1', '2', '3', '4'];
 const padKeys = ['1', '2', '3', '4'];
+const padFrequencies = [329.63, 392.0, 523.25, 659.25];
 
 const state = {
   mode: 'intro',
@@ -42,6 +44,8 @@ const state = {
   inputFlash: 0,
   paused: false,
   modeBeforePause: null,
+  lastMistake: null,
+  soundEnabled: false,
   seed: seedParam,
   demo: scriptedDemo,
   demoTimer: 0,
@@ -55,6 +59,7 @@ const rng = () => {
 };
 
 const pads = createPads();
+let audioContext = null;
 
 function createPads() {
   const size = Math.min(canvas.width, canvas.height);
@@ -67,6 +72,50 @@ function createPads() {
     y: center.y + Math.sin(angle) * radius,
     r: padRadius
   }));
+}
+
+function ensureAudioContext() {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return false;
+  if (!audioContext) audioContext = new AudioCtx();
+  if (audioContext.state === 'suspended') {
+    audioContext.resume().catch(() => {});
+  }
+  state.soundEnabled = true;
+  return true;
+}
+
+function playTone(frequency, durationMs = 120, gainValue = 0.06, startOffset = 0) {
+  if (!audioContext) return;
+  const now = audioContext.currentTime + startOffset;
+  const duration = durationMs / 1000;
+  const oscillator = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+  oscillator.type = 'sine';
+  oscillator.frequency.value = frequency;
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.015);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+  oscillator.connect(gain);
+  gain.connect(audioContext.destination);
+  oscillator.start(now);
+  oscillator.stop(now + duration + 0.02);
+}
+
+function playPadTone(index, isPlayerInput = false) {
+  const base = padFrequencies[index] || 440;
+  playTone(base, isPlayerInput ? 130 : 95, isPlayerInput ? 0.08 : 0.05);
+}
+
+function playRoundClearCue() {
+  playTone(523.25, 120, 0.05, 0);
+  playTone(659.25, 120, 0.05, 0.09);
+  playTone(783.99, 160, 0.05, 0.18);
+}
+
+function playFailCue() {
+  playTone(220, 180, 0.06, 0);
+  playTone(185, 220, 0.06, 0.16);
 }
 
 function setMode(mode) {
@@ -87,9 +136,13 @@ function resetGame() {
   state.inputFlash = 0;
   state.paused = false;
   state.modeBeforePause = null;
+  state.lastMistake = null;
   rngSeed = state.seed;
   setMode('showing');
   overlay.classList.add('overlay--hidden');
+  resultTitle.textContent = 'Missed!';
+  resultBody.textContent = 'Press R to try again.';
+  playTone(440, 90, 0.04);
 }
 
 function nextPad() {
@@ -116,6 +169,7 @@ function startShowing() {
   state.showPhase = 'lit';
   state.showTimer = 0;
   state.litPad = state.sequence[0];
+  playPadTone(state.litPad, false);
   setMode('showing');
 }
 
@@ -128,6 +182,7 @@ function startInput() {
 function handleInput(index) {
   if (state.mode !== 'input' || state.paused) return;
   const expected = state.sequence[state.inputIndex];
+  playPadTone(index, true);
   state.litPad = index;
   state.inputFlash = 180;
   if (index === expected) {
@@ -138,11 +193,14 @@ function handleInput(index) {
       state.best = Math.max(state.best, state.score);
       state.round += 1;
       state.sequence.push(nextPad());
+      playRoundClearCue();
       startShowing();
     }
   } else {
+    state.lastMistake = { expected, received: index };
     resultTitle.textContent = 'Missed!';
-    resultBody.textContent = `You reached round ${state.round}. Score ${state.score}. Press R to try again.`;
+    resultBody.textContent = `Expected pad ${padLabels[expected]}, but got ${padLabels[index]}. Score ${state.score}. Press R to try again.`;
+    playFailCue();
     setMode('fail');
   }
 }
@@ -170,6 +228,7 @@ function update(dt) {
         startInput();
       } else {
         state.litPad = state.sequence[state.showIndex];
+        playPadTone(state.litPad, false);
       }
     }
   }
@@ -223,10 +282,31 @@ function render() {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(`Best ${state.best}`, canvas.width / 2, canvas.height * 0.86);
+  const phaseMessage =
+    state.mode === 'showing'
+      ? 'Phase: Watch the sequence'
+      : state.mode === 'input'
+        ? 'Phase: Repeat the sequence'
+        : state.mode === 'paused'
+          ? 'Phase: Paused'
+          : state.mode === 'fail'
+            ? 'Phase: Round ended'
+            : 'Phase: Ready';
+  ctx.fillText(phaseMessage, canvas.width / 2, canvas.height * 0.92);
 
   roundLabel.textContent = `Round ${state.round}`;
   scoreLabel.textContent = `Score ${state.score}`;
   speedLabel.textContent = `Tempo ${currentTempo().toFixed(2)}x`;
+  phaseLabel.textContent =
+    state.mode === 'showing'
+      ? 'Phase Watch'
+      : state.mode === 'input'
+        ? 'Phase Input'
+        : state.mode === 'paused'
+          ? 'Phase Pause'
+          : state.mode === 'fail'
+            ? 'Phase Fail'
+            : 'Phase Intro';
 }
 
 function loop(timestamp) {
@@ -239,6 +319,7 @@ function loop(timestamp) {
 
 function startGame(demo = false) {
   state.demo = demo;
+  ensureAudioContext();
   resetGame();
 }
 
@@ -246,6 +327,7 @@ startButton.addEventListener('click', () => startGame(false));
 demoButton.addEventListener('click', () => startGame(true));
 
 canvas.addEventListener('click', (event) => {
+  ensureAudioContext();
   const rect = canvas.getBoundingClientRect();
   const x = ((event.clientX - rect.left) / rect.width) * canvas.width;
   const y = ((event.clientY - rect.top) / rect.height) * canvas.height;
@@ -254,19 +336,23 @@ canvas.addEventListener('click', (event) => {
 });
 
 window.addEventListener('keydown', (event) => {
+  ensureAudioContext();
   if (event.key === 'p' || event.key === 'P') {
     if (state.paused) {
       state.paused = false;
       setMode(state.modeBeforePause || 'input');
       state.modeBeforePause = null;
+      playTone(660, 90, 0.05);
     } else {
       state.paused = true;
       state.modeBeforePause = state.mode;
       setMode('paused');
+      playTone(330, 120, 0.05);
     }
     return;
   }
   if (event.key === 'r' || event.key === 'R') {
+    playTone(494, 100, 0.05);
     resetGame();
     return;
   }
@@ -302,6 +388,8 @@ window.render_game_to_text = () => {
     seed: state.seed,
     paused: state.paused,
     demo: state.demo,
+    soundEnabled: state.soundEnabled,
+    lastMistake: state.lastMistake,
     coordinateSystem: {
       origin: 'top-left',
       x: 'right',
