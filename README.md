@@ -12,6 +12,10 @@
   <img src="assets/gifs/clip-2-speedup.gif" alt="Simon Says speed increment gameplay" width="420" />
 </div>
 
+<div align="center">
+  <a href="https://daily-classic-game-2026-02-24-simon-says-speed-increments.vercel.app"><strong>Play Live on Vercel</strong></a>
+</div>
+
 ## Quick Start
 
 ```bash
@@ -25,6 +29,7 @@ pnpm dev
 - Use mouse clicks or keys `1` `2` `3` `4` for pad input.
 - Press `P` to pause/resume and `R` to restart at any time.
 - Keep your browser tab audible: the game plays pad tones and feedback cues.
+- If audio is muted by browser policy, click inside the game once to enable sound.
 
 ## Rules
 - Input is valid only during the `Input` phase.
