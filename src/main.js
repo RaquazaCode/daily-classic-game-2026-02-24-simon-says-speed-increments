@@ -142,7 +142,7 @@ function handleInput(index) {
     }
   } else {
     resultTitle.textContent = 'Missed!';
-    resultBody.textContent = `You reached round ${state.round}. Press R to try again.`;
+    resultBody.textContent = `You reached round ${state.round}. Score ${state.score}. Press R to try again.`;
     setMode('fail');
   }
 }
