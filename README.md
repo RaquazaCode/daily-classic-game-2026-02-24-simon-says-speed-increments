@@ -1,11 +1,15 @@
 # daily-classic-game-2026-02-24-simon-says-speed-increments
 
 <div align="center">
-  <p><strong>Memorize the glowing pad sequence, then repeat it as the tempo accelerates every round.</strong></p>
+  <p><strong>Memorize the pattern, repeat it exactly, and survive the tempo ramp.</strong></p>
 </div>
 
 <div align="center">
-  <img src="assets/gifs/clip-1-intro.gif" alt="Simon Says intro capture" width="420" />
+  <img src="assets/images/hero.png" alt="Simon Says gameplay still" width="540" />
+</div>
+
+<div align="center">
+  <img src="assets/gifs/clip-2-speedup.gif" alt="Simon Says speed increment gameplay" width="420" />
 </div>
 
 ## Quick Start
@@ -16,19 +20,23 @@ pnpm dev
 ```
 
 ## How To Play
-- Watch the pads light up in order.
-- Click the pads or press `1`-`4` to repeat the sequence.
-- Press `P` to pause and `R` to restart.
+- Press `Start` (or `Enter`) and watch the full sequence first.
+- Wait until HUD phase shows `Input`, then replay the pattern in exact order.
+- Use mouse clicks or keys `1` `2` `3` `4` for pad input.
+- Press `P` to pause/resume and `R` to restart at any time.
+- Keep your browser tab audible: the game plays pad tones and feedback cues.
 
 ## Rules
-- A round is cleared when you match the entire sequence.
-- A wrong input ends the run.
-- Each round adds one new step to the sequence.
+- Input is valid only during the `Input` phase.
+- Every round appends one new pad to the sequence.
+- You must match every step in order; partial correctness does not clear a round.
+- One wrong step immediately ends the run and shows the expected vs received pad.
+- Tempo increases each round, reducing show/gap timing and raising difficulty.
 
 ## Scoring
-- Score increases when you complete a round.
-- Higher tempo rounds award larger bonuses.
-- Best score persists during the session.
+- Round clear bonus: `round_score = round(100 * tempo + round * 10)`.
+- Higher tempo rounds yield larger score gains.
+- `Best` tracks your highest score for the current browser session.
 
 ## Twist
 The playback tempo speeds up after every successful round, compressing flash and gap timing. Faster rounds are worth more points.
@@ -42,9 +50,10 @@ pnpm build
 
 ## Project Layout
 - `index.html`: Canvas shell and overlays.
-- `src/main.js`: Game loop, input, and rendering.
+- `src/main.js`: Game loop, explicit phase rules, scoring, and sound cues.
 - `src/style.css`: Visual styling and layout.
-- `assets/gifs/`: Capture placeholders for gameplay clips.
+- `assets/images/`: Hero still image for README/About.
+- `assets/gifs/`: Real gameplay GIF captures.
 - `docs/plans/`: Implementation planning notes.
 
 ## GIF Captures

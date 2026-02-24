@@ -46,6 +46,8 @@ body {
   display: flex;
   gap: 16px;
   font-weight: 600;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .stage {
