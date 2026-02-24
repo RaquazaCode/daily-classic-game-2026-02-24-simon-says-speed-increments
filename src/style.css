@@ -1,0 +1,133 @@
+:root {
+  font-family: "Rubik", "Trebuchet MS", sans-serif;
+  color-scheme: light;
+  background: radial-gradient(circle at top, #f7f0d4 0%, #f1e3b5 45%, #e8d39b 100%);
+  color: #1b1a16;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#app {
+  width: min(1100px, 94vw);
+  padding: 24px 20px 40px;
+  display: grid;
+  gap: 16px;
+}
+
+.hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  background: #fdf9ea;
+  border-radius: 16px;
+  border: 2px solid #1b1a16;
+  box-shadow: 0 10px 20px rgba(34, 22, 0, 0.12);
+}
+
+.hud__title {
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.hud__meta {
+  display: flex;
+  gap: 16px;
+  font-weight: 600;
+}
+
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+canvas {
+  width: min(720px, 90vw);
+  height: auto;
+  background: #1b1a16;
+  border-radius: 22px;
+  border: 3px solid #1b1a16;
+  box-shadow: 0 20px 40px rgba(34, 22, 0, 0.18);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(27, 26, 22, 0.6);
+}
+
+.overlay--hidden {
+  display: none;
+}
+
+.panel {
+  background: #fdf9ea;
+  padding: 24px 28px;
+  border-radius: 18px;
+  border: 2px solid #1b1a16;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: min(420px, 88vw);
+}
+
+.panel h1,
+.panel h2 {
+  margin: 0 0 12px;
+  font-size: 1.5rem;
+}
+
+.panel__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.panel__actions button {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 2px solid #1b1a16;
+  background: #ffce38;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.panel__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+.panel--compact {
+  width: min(320px, 84vw);
+}
+
+@media (max-width: 600px) {
+  .hud {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .hud__meta {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

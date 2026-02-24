@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Simon Says: Speed Increments</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="hud">
+        <div class="hud__title">Simon Says: Speed Increments</div>
+        <div class="hud__meta">
+          <div id="round-label">Round 1</div>
+          <div id="score-label">Score 0</div>
+          <div id="speed-label">Tempo 1.0x</div>
+        </div>
+      </header>
+      <main class="stage">
+        <canvas id="game" width="720" height="720" aria-label="Simon Says Game"></canvas>
+        <div class="overlay" id="overlay">
+          <div class="panel">
+            <h1>Follow the Pattern</h1>
+            <p>Watch the sequence, then repeat it in order.</p>
+            <div class="panel__actions">
+              <button id="start-btn">Start</button>
+              <button id="demo-btn">Scripted Demo</button>
+            </div>
+            <ul class="panel__list">
+              <li>Click the pads or press 1-4.</li>
+              <li>Press P to pause. R to restart.</li>
+              <li>Each round speeds up.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="overlay overlay--hidden" id="pause-overlay">
+          <div class="panel panel--compact">
+            <h2>Paused</h2>
+            <p>Press P to resume.</p>
+          </div>
+        </div>
+        <div class="overlay overlay--hidden" id="result-overlay">
+          <div class="panel panel--compact">
+            <h2 id="result-title">Missed!</h2>
+            <p id="result-body">Press R to try again.</p>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
