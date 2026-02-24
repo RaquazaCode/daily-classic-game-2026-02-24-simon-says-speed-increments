@@ -14,3 +14,5 @@ Original prompt: Daily Classic Game automation run for 2026-02-24 (Simon Says di
 - Complete README with final verification commands and asset references after captures.
 - Ran `pnpm test` and `pnpm build` successfully.
 - Captured Playwright artifacts in `playwright/main-actions` using scripted demo.
+- Added .vercel to .gitignore after authenticated deploy.
+- Redeployed preview from latest main commit.
