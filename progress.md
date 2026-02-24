@@ -12,3 +12,5 @@ Original prompt: Daily Classic Game automation run for 2026-02-24 (Simon Says di
 - Run Playwright capture script and verify screenshots/state.
 - Generate real GIF captures to replace placeholders.
 - Complete README with final verification commands and asset references after captures.
+- Ran `pnpm test` and `pnpm build` successfully.
+- Captured Playwright artifacts in `playwright/main-actions` using scripted demo.
