@@ -16,3 +16,4 @@ Original prompt: Daily Classic Game automation run for 2026-02-24 (Simon Says di
 - Captured Playwright artifacts in `playwright/main-actions` using scripted demo.
 - Added .vercel to .gitignore after authenticated deploy.
 - Redeployed preview from latest main commit.
+- Latest deploy attempt fell back to claimable URL; naming policy failed.
